@@ -9,6 +9,20 @@ import binascii
 from util import Helper
 # mysql语句               
 insert_into_block      = "INSERT INTO ethereum.Blocks(block_number, block_hash, timestamp, prev_block_hash, nonce, miner_addr, difficulty, size_bytes, extra_data) VALUES (%s,%s,FROM_UNIXTIME(%s),%s,%s,%s,%s,%s,%s)"
+'''
+drop table Blocks;
+create table Blocks(
+block_number int,
+block_hash varchar(100),
+timestamp varchar(100),
+prev_block_hash varchar(100),
+nonce varchar(100),
+miner_addr varchar(100),
+difficulty bigint,
+size_bytes int,
+extra_data varchar(2000)
+);
+'''
 
 # 每次汇报的频率
 FREQUENCY = 500
@@ -42,7 +56,6 @@ def queue_address_for_insertion(address, block_hash, address_type=0):
 #   在数据库中保存区块
 def save_block_to_db(block):
     insert_into_block_args = [block["number"],block["hash"],block["timestamp"],block["parentHash"],block["nonce"],block["miner"],block["difficulty"],block["size"],block["extraData"]]
-    cursor.execute(insert_into_block , insert_into_block_args);
     cursor.execute(insert_into_block , insert_into_block_args);
     if(block["number"] % FREQUENCY == 0):
         try:
