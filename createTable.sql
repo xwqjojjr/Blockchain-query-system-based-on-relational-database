@@ -1,14 +1,8 @@
-psql -U blockchains -d db_blockchains -h 127.0.0.1 -p 5432
-
-INSERT INTO ethereum.Blocks
-          (block_number, block_hash, timestamp, prev_block_hash, nonce, miner_addr, difficulty, size_bytes, extra_data, block_reward)
-          VALUES (%(number)s, %(hash)s, to_timestamp(%(timestamp)s), %(parentHash)s, %(nonce)s, %(miner)s, %(difficulty)s, %(size)s, %(extraData)s, 5
-
 drop table Blocks;
 create table Blocks(
 block_number int,
 block_hash varchar(100),
-timestamp datetime,
+timestamp varchar(100),
 prev_block_hash varchar(100),
 nonce varchar(100),
 miner_addr varchar(100),
@@ -17,71 +11,26 @@ size_bytes int,
 extra_data varchar(2000)
 );
 
-drop table Blocks;
-create table Blocks(
-block_hash varchar(100)
-);
-
-INSERT INTO Addresses
-                  (address, address_type)
-                  VALUES (%s, %s)
-
 
 create table Addresses(
-address varchar (100),
-address_type int
+Address varchar(100) unique,
+Address_type int,
+eth bigint
 );
 
-
-INSERT INTO Addresses_Blocks
-                  (address, block_hash)
-                  VALUES (%s, %s)
-
-create table Addresses_Blocks(
-address varchar(100),
-block_hash varchar(100)
+CREATE TABLE `Transactions` (
+  `block_number` int(11) DEFAULT NULL,
+  `block_hash` varchar(100) DEFAULT NULL,
+  `tx_from` varchar(100) DEFAULT NULL,
+  `tx_hash` varchar(100) DEFAULT NULL,
+  `tx_index` int(11) DEFAULT NULL,
+  `tx_input` varchar(2000) DEFAULT NULL,
+  `tx_value` varchar(100) DEFAULT NULL,
+  `tx_type` int(11) DEFAULT NULL,
+  `nonce` int(11) DEFAULT NULL,
+  `tx_to` varchar(100) DEFAULT NULL
 );
 
-INSERT INTO ethereum.Transactions
-            (tx_hash, tx_index, input, tx_type, nonce)
-            VALUES (%(hash)s, %(transactionIndex)s, %(input)s, %(tx_type)s, %(nonce)s)
-
-create table Transactions(
-tx_hash varchar(100),
-tx_index int,
-input varchar(200),
-tx_type int,
-nonce int
-);
-
-INSERT INTO TxFromAddress
-            (address, tx_hash, input_value)
-            VALUES (%(from)s, %(hash)s, %(value)s)
-
-create table TxFromAddress(
-address varchar(100),
-tx_hash varchar(100),
-input_value varchar(1000)
-);
-
-INSERT INTO TxToAddress
-            (address, tx_hash, output_value)
-            VALUES (%(to)s, %(hash)s, %(value)s)
-
-
-create table TxToAddress(
-address varchar(100),
-tx_hash varchar(100),
-output_value varchar(1000)
-);
-
-
-INSERT INTO ethereum.Transactions_Blocks
-            (tx_hash, block_hash)
-            VALUES (%(tx)s, %(block)s)
-
-
-create table Transactions_Blocks(
-tx_hash varchar(100),
-block_hash varchar(100)
+create table error_block(
+block_number int;
 );
