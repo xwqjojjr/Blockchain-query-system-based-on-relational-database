@@ -9,11 +9,11 @@ import binascii
 
 # mysql语句 
 
-insert_into_block      = "INSERT INTO ethereum.Addresses(Address,Address_type) VALUES (%s,%s)"
+insert_into_block      = "INSERT INTO ethereum.Addresses(addr,addr_type) VALUES (%s,%s)"
 '''
 create table Addresses(
-Address varchar(100),
-Address_type int,
+addr varchar(100),
+addr_type int,
 eth bigint
 );
 '''
@@ -47,6 +47,7 @@ def callback(ch,method,properties,body):
 		address_type = body
 	save_address(addr,address_type)
         count  = count +1
+
 def save_address(addr,address_type):
     insert_into_args 	= [addr,address_type ]
     print(insert_into_args)
