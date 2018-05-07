@@ -9,6 +9,7 @@ import binascii
 from util import Helper
 # mysql语句               
 insert_into_block      = "INSERT INTO ethereum.Blocks(block_number, block_hash, timestamp, prev_block_hash, nonce, miner_addr, difficulty, size_bytes, extra_data) VALUES (%s,%s,FROM_UNIXTIME(%s),%s,%s,%s,%s,%s,%s)"
+insert_into_Tx_Block  =  "INSERT INTO ethereum.Tx_Block(tx_hash,block_number,block_hash) VALUES (%s,%s,%s)"
 '''
 drop table Blocks;
 create table Blocks(
@@ -21,6 +22,12 @@ miner_addr varchar(100),
 difficulty bigint,
 size_bytes int,
 extra_data varchar(2000)
+);
+
+create table Tx_Block(
+tx_hash varchar(70),
+block_number int,
+block_hash varchar(70)
 );
 '''
 
@@ -57,6 +64,11 @@ def queue_address_for_insertion(address, block_hash, address_type=0):
 def save_block_to_db(block):
     insert_into_block_args = [block["number"],block["hash"],block["timestamp"],block["parentHash"],block["nonce"],block["miner"],block["difficulty"],block["size"],block["extraData"]]
     cursor.execute(insert_into_block , insert_into_block_args);
+    for tx in block["transactions"]:
+#	print tx["hash"]
+        insert_into_Tx_Block_args = [tx["hash"],block["number"],block["hash"]]
+#        print(insert_into_Tx_Block_args)
+   	cursor.execute(insert_into_Tx_Block , insert_into_Tx_Block_args)
     if(block["number"] % FREQUENCY == 0):
         try:
                  n=db.commit()
