@@ -9,7 +9,7 @@ import binascii
 from util import Helper
 
 # mysql语句 
-insert_into_block      = "INSERT INTO ethereum.Transactions(block_number,block_hash,tx_from,tx_hash,tx_index,tx_input,tx_value,tx_type,nonce) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+insert_into_block      = "INSERT INTO ethereum.Transactions(block_number,block_hash,tx_from,tx_to,tx_hash,tx_index,tx_input,tx_value,tx_type,nonce) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 
 # 每次汇报的频率
 FREQUENCY = 100
@@ -52,7 +52,7 @@ def callback(ch, method, properties,body):
 #   在数据库中保存交易
 
 def save_tx(tx,tx_type):
-    insert_into_tx_args    = [ tx["blockNumber"],tx["blockHash"],tx["from"],tx["hash"],tx["transactionIndex"],tx["input"],tx["value"],tx_type,tx["nonce"] ]
+    insert_into_tx_args    = [ tx["blockNumber"],tx["blockHash"],tx["from"],tx["to"],tx["hash"],tx["transactionIndex"],tx["input"],tx["value"],tx_type,tx["nonce"] ]
     try:
         cursor.execute(insert_into_block,insert_into_tx_args)
         if(tx["blockNumber"] % FREQUENCY == 0):
