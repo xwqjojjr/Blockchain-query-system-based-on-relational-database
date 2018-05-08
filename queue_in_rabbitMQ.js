@@ -14,9 +14,9 @@ else
 
 
 var	 BLOCK_REWARD		 = 5,
-	 FIRST_BLOCK		 = 500000,
-	 MAXIMUM_BLOCK		 = 1000000,
-	 REPORT_FREQUENCY_BLOCKS = 1800;
+	 FIRST_BLOCK		 = 1000000,
+	 MAXIMUM_BLOCK		 = 2000000,
+	 REPORT_FREQUENCY_BLOCKS = 10000;
 
 
 console.log("MAX_BLOCK=" +  MAXIMUM_BLOCK)
@@ -29,6 +29,7 @@ var queue_blocks_from = function (block_number) {
 	web3.eth.getBlock(block_number, true, function(error, result) {
 		if(error) {
 			console.log("error", "Error getting block number: " + block_number + ". '" + error + "'");
+			connection.publish("error_block",block_number)
 		} else {
 			if(result){
 				//保存交易
@@ -40,11 +41,19 @@ var queue_blocks_from = function (block_number) {
                                         } else {
                                                 if(web3.eth.getCode(cur_tx.to) == "0x"){
                                                         cur_tx_type = 0; // Person to Person
+                                                        connection.publish("Address",cur_tx.from)
+                                                        connection.publish("Address","1")
+                                                        connection.publish("Address",cur_tx.to)
+                                                        connection.publish("Address","1")
                                                 } else {
                                                         cur_tx_type = 1; // Person to Contract
+                                                        connection.publish("Address",cur_tx.from)
+                                                        connection.publish("Address","1")
+                                                        connection.publish("Address",cur_tx.to)
+                                                        connection.publish("Address","0")
                                                 }
                                         }
-                                        console.log(cur_tx,cur_tx_type)
+                                        //console.log(cur_tx,cur_tx_type)
 					connection.publish("ethtx",cur_tx)
 					connection.publish("ethtx",cur_tx_type)
  				}
