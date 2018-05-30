@@ -9,7 +9,7 @@ import binascii
 from util import Helper
 
 # mysql语句 
-insert_into_Transactions      = "INSERT INTO ethereum.Transactions(blockNumber,blockHash,txHash,txFrom,txTo,txIndex,txInput,txValue,txType) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+insert_into_Transactions      = "INSERT INTO EthTest_transactions(blockNumber,blockHash,txHash,txFrom,txTo,txIndex,txInput,txValue,txType) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 insert_into_AddressHistory    = "INSERT INTO ethereum.EthTest_addresshistory(blockNumber,txHash,addr,balance,txGas) VALUES (%s,%s,%s,%s,%s)"
 
 # 每次汇报的频率
@@ -55,7 +55,7 @@ def callback(ch, method, properties,body):
 
 def save_tx(tx,tx_type):
     insert_into_tx_args    = [ tx["blockNumber"],tx["blockHash"],tx["hash"],tx["from"],tx["to"],tx["transactionIndex"],tx["input"],tx["value"],tx_type ]
-    insert_into_addr_from  = [tx["blockNumber"],tx["hash"],tx["from"],-tx["value"],-tx["gas"]*tx["gasPrice"]]
+    insert_into_addr_from  = [tx["blockNumber"],tx["hash"],tx["from"],tx["value"],tx["gas"]*tx["gasPrice"]]
     insert_into_addr_to	   = [tx["blockNumber"],tx["hash"],tx["to"],tx["value"],tx["gas"]*tx["gasPrice"]]
     try:
         cursor.execute(insert_into_Transactions,insert_into_tx_args)
