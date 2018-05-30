@@ -10,7 +10,7 @@ from util import Helper
 
 # mysql语句 
 insert_into_Transactions      = "INSERT INTO EthTest_transactions(blockNumber,blockHash,txHash,txFrom,txTo,txIndex,txInput,txValue,txType) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-insert_into_AddressHistory    = "INSERT INTO ethereum.EthTest_addresshistory(blockNumber,txHash,addr,balance,txGas) VALUES (%s,%s,%s,%s,%s)"
+insert_into_AddressHistory    = "INSERT INTO ethereum.EthTest_addresshistory(blockNumber,txHash,addrHash,balance,txGas) VALUES (%s,%s,%s,%s,%s)"
 
 # 每次汇报的频率
 FREQUENCY = 100
