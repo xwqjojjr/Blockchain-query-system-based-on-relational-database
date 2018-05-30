@@ -8,28 +8,7 @@ import sha3
 import binascii
 from util import Helper
 # mysql语句               
-insert_into_block      = "INSERT INTO ethereum.Blocks(block_number, block_hash, timestamp, prev_block_hash, nonce, miner_addr, difficulty, size_bytes, extra_data) VALUES (%s,%s,FROM_UNIXTIME(%s),%s,%s,%s,%s,%s,%s)"
-insert_into_Tx_Block  =  "INSERT INTO ethereum.Tx_Block(tx_hash,block_number,block_hash) VALUES (%s,%s,%s)"
-'''
-drop table Blocks;
-create table Blocks(
-block_number int,
-block_hash varchar(100),
-timestamp varchar(100),
-prev_block_hash varchar(100),
-nonce varchar(100),
-miner_addr varchar(100),
-difficulty bigint,
-size_bytes int,
-extra_data varchar(2000)
-);
-
-create table Tx_Block(
-tx_hash varchar(70),
-block_number int,
-block_hash varchar(70)
-);
-'''
+insert_into_block      = "INSERT INTO ethereum.EthTest_blocks(blockNumber,blockHash,timeStamp,prevBlockHash,minerAddr,txCount,gasUsed) VALUES (%s,%s,FROM_UNIXTIME(%s),%s,%s,%s,%s)"
 
 # 每次汇报的频率
 FREQUENCY = 500
@@ -62,19 +41,17 @@ def queue_address_for_insertion(address, block_hash, address_type=0):
 
 #   在数据库中保存区块
 def save_block_to_db(block):
-    insert_into_block_args = [block["number"],block["hash"],block["timestamp"],block["parentHash"],block["nonce"],block["miner"],block["difficulty"],block["size"],block["extraData"]]
-    cursor.execute(insert_into_block , insert_into_block_args);
+    count = 0
     for tx in block["transactions"]:
-#	print tx["hash"]
-        insert_into_Tx_Block_args = [tx["hash"],block["number"],block["hash"]]
-#        print(insert_into_Tx_Block_args)
-   	cursor.execute(insert_into_Tx_Block , insert_into_Tx_Block_args)
+	count = count +1
+    insert_into_block_args = [block["number"],block["hash"],block["timestamp"],block["parentHash"],block["miner"],count,block["gasUsed"]]
+    cursor.execute(insert_into_block , insert_into_block_args);
     if(block["number"] % FREQUENCY == 0):
-        try:
-                 n=db.commit()
-                 print("Loading %d blocks to DB from #%s (at %s )"% (FREQUENCY,block["number"], time.asctime(time.localtime())  ))
-        except Exception as e:
-                 print("ERROR",str(e),sql_insert_Blocks)
+    	try:
+        	n=db.commit()
+         	print("Loading %d blocks to DB from #%s (at %s )"% (FREQUENCY,block["number"], time.asctime(time.localtime())  ))
+    	except Exception as e:
+        	 print("ERROR",str(e),sql_insert_Blocks)
 #   把区块、交易和账户等信息保存到数据库中
 def save_to_db(block):
     save_block_to_db(block);
