@@ -9,10 +9,11 @@ var RPC_SERVER = "http://localhost:8545";
 var web3 = new Web3(new Web3.providers.HttpProvider(RPC_SERVER));
 
 var	BLOCK_REWARD = 5,
-	FIRST_BLOCK = 2000000,
-	MAXIMUM_BLOCK = web3.eth.blockNumber,
+	FIRST_BLOCK = 1,
+	MAXIMUM_BLOCK = 500000,	
+//	MAXIMUM_BLOCK = web3.eth.blockNumber,
 	BLOCKS_AT_A_TIME = 1800,
-	BLOCK_QUEUE_TIMEOUT = 1000;
+	BLOCK_QUEUE_TIMEOUT = 2000;
 console.log(FIRST_BLOCK,MAXIMUM_BLOCK)
 
 if(!web3.isConnected()){
@@ -28,30 +29,24 @@ var queue_block = function (block_number){
 			connection.publish("error_block",block_number)
 		} else {
 			if(result){
+				//console.log(result)
 				//保存交易
 				var cur_tx,cur_tx_type;
 				for(var i=0 ; i<result.transactions.length;i++){
 					connection.publish("ethtx",cur_tx)
  				}
-				console.log("info", "Queueing Block #" + block_number + " (with " + result.transactions.length + " transactions).");
+				//console.log("info", "Queueing Block #" + block_number + " (with " + result.transactions.length + " transactions).");
 				connection.publish("ethblocks", result);
 			} else {
 				console.log("warn", "No block seen for #" + block_number);
 			}
-		}
-		if(block_number < MAXIMUM_BLOCK){
-			queue_block(block_number + 1)
 		}
 	});
 	},
 	queue_n_blocks = function(starting_block, n) {
 		console.log("info", "Queueing " + n + " blocks, from " + starting_block);
 		for(var i = starting_block; i < (starting_block + n); i++){
-			if(i <= MAXIMUM_BLOCK){
 				queue_block(i);
-			} else {
-				console.log("info", "skipped #" + i);
-			}
 		}
 	};
 
@@ -62,7 +57,8 @@ connection.on('ready', function () {
 	var repeat_queue_blocks = function(current_block) {
 		if(current_block <= MAXIMUM_BLOCK){
 			queue_n_blocks(current_block, BLOCKS_AT_A_TIME);
-			setTimeout(repeat_queue_blocks.bind(this, (current_block+BLOCKS_AT_A_TIME+1)), BLOCK_QUEUE_TIMEOUT)
+			current_block = current_block+BLOCKS_AT_A_TIME;
+			setTimeout(repeat_queue_blocks.bind(this, (current_block)), BLOCK_QUEUE_TIMEOUT)
 		}
 	};
 	setTimeout(repeat_queue_blocks.bind(this, FIRST_BLOCK), BLOCK_QUEUE_TIMEOUT);
