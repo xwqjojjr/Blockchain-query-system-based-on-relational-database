@@ -56,13 +56,13 @@ def save_block_to_db(block):
             		tx_type = 2 
             		contractAddr =str( helper.calculate_contract_address(tx))
 	    	
-			print "contractAddr=",contractAddr
-			print type(contractAddr) 
+			#print "contractAddr=",contractAddr
+			#print type(contractAddr) 
 			#print json.loads(block)
            		insert_into_addr_args = [contractAddr,1]
             		cursor.execute(insert_into_addr , insert_into_addr_args);
 	   		insert_into_addr_args = [tx["from"],0]
-			print tx["from"]
+			#print tx["from"]
                         cursor.execute(insert_into_addr , insert_into_addr_args);
  
 	   		insert_into_tx_args   = [ tx["blockNumber"],tx["blockHash"],tx["hash"],tx["from"],contractAddr,tx["transactionIndex"],tx["input"],tx["value"],tx_type ]
@@ -91,14 +91,14 @@ def save_block_to_db(block):
 	    		insert_into_addr_to    = [tx["blockNumber"],tx["hash"],tx["to"],tx["value"],gas,1]
             		cursor.execute(insert_into_AddressHistory,insert_into_addr_to)
     except Exception as e:
-	print("ERROR",str(e),tx)
+	print("ERROR",str(e),tx,"error error")
 #	print tx
     if(tx["blockNumber"] % FREQUENCY == 0):
     	try:
             n=db.commit()
-            print("Loading %d blocks to DB from #%s (at %s )"% (FREQUENCY,block["number"], time.asctime(time.localtime())  ))
+            print("Loading %d blocks to DB from #%s (at %s )"% (FREQUENCY,block["blockNumber"], time.asctime(time.localtime())  ))
     	except Exception as e:
-      	    print("ERROR",str(e))
+      	    print("ERROR",str(e),"erererer")
 #   把区块、交易和账户等信息保存到数据库中
 def save_to_db(block):
     save_block_to_db(block);
