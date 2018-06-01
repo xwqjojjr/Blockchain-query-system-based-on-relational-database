@@ -10,7 +10,7 @@ var web3 = new Web3(new Web3.providers.HttpProvider(RPC_SERVER));
 
 var	BLOCK_REWARD = 5,
 	FIRST_BLOCK = 1,
-	MAXIMUM_BLOCK = 500000,	
+	MAXIMUM_BLOCK = 1000000,	
 //	MAXIMUM_BLOCK = web3.eth.blockNumber,
 	BLOCKS_AT_A_TIME = 1800,
 	BLOCK_QUEUE_TIMEOUT = 2000;
@@ -33,6 +33,7 @@ var queue_block = function (block_number){
 				//保存交易
 				var cur_tx,cur_tx_type;
 				for(var i=0 ; i<result.transactions.length;i++){
+					cur_tx = result.transactions[i];
 					connection.publish("ethtx",cur_tx)
  				}
 				//console.log("info", "Queueing Block #" + block_number + " (with " + result.transactions.length + " transactions).");
